@@ -1,4 +1,4 @@
-# GitPpod ports backwarder
+# GitPod ports backwarder
 
 GitPod Local Companion tool can be used as a ports forwarder to bring remote cloud ports to a local machine.
 
