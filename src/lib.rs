@@ -8,34 +8,34 @@ use tokio::io::{AsyncBufReadExt, BufReader};
 
 use command_group::{AsyncCommandGroup, AsyncGroupChild};
 
-pub enum HostName<'a> {
+pub enum HostName {
     Default,
-    Is(&'a str),
+    Is(String),
 }
 
 pub struct CompanionHandle {
-    companion_process: AsyncGroupChild,
-    ssh_config_path: String,
+    pub companion_process: AsyncGroupChild,
+    pub ssh_config_path: String,
 }
 
-pub async fn run_companion(gitpod_host: HostName<'_>) -> Option<CompanionHandle> {
+pub async fn run_companion(gitpod_host: HostName) -> Option<CompanionHandle> {
     println!("Hello, world!");
 
     let arg_no_tunnel = "--auto-tunnel=false";
     let arg_gitpod_host = "--gitpod-host";
 
-    let companion_args = |arg_no_tunnel, arg_gitpod_host, gitpod_host| -> Vec<&str> {
+    let args = {
         match gitpod_host {
             HostName::Is(host) => {
-                vec![arg_no_tunnel, arg_gitpod_host, host]
+                let ret = vec![arg_no_tunnel.to_string(), arg_gitpod_host.to_string(), host];
+                ret
             }
             HostName::Default => {
-                vec![arg_no_tunnel]
+                let ret = vec![arg_no_tunnel.to_string()];
+                ret
             }
         }
     };
-
-    let args = companion_args(arg_no_tunnel, arg_gitpod_host, gitpod_host);
 
     let companion_process = Command::new("gitpod-local-companion-windows.exe")
         .args(args)
